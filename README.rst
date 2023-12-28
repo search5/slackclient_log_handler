@@ -1,29 +1,25 @@
-slacker_log_handler
+slackclient_log_handler
 ===================
 
 .. image:: https://img.shields.io/pypi/v/slacker_log_handler.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/slacker_log_handler
+    :target: https://pypi.python.org/pypi/slackclient_log_handler
 
 .. image:: https://img.shields.io/pypi/wheel/slacker_log_handler.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/slacker_log_handler
+    :target: https://pypi.python.org/pypi/slackclient_log_handler
 
 .. image:: https://img.shields.io/pypi/format/slacker_log_handler.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/slacker_log_handler
+    :target: https://pypi.python.org/pypi/slackclient_log_handler
 
 .. image:: https://img.shields.io/pypi/pyversions/slacker_log_handler.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/slacker_log_handler
+    :target: https://pypi.python.org/pypi/slackclient_log_handler
 
 .. image:: https://img.shields.io/pypi/status/slacker_log_handler.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/slacker_log_handler
+    :target: https://pypi.python.org/pypi/slackclient_log_handler
 
 Python log handler that posts to a Slack channel. Posts to the Slack API
-using https://github.com/os/slacker.
+using https://slack.dev/python-slack-sdk.
 
-For a different implementation using webhooks instead of Slacker, see
-https://github.com/claudetech/python-slack-log or read
-http://www.pythian.com/blog/logging-for-slackers/
-
-Created with the intention of using for a Django project, but some
+Created with the intention of using for a Internal project, but some
 effort has been made to make it generic enough that any Python project
 could use it.
 
@@ -32,12 +28,12 @@ Installation
 
 .. code-block:: bash
 
-    pip install slacker-log-handler
+    pip install slackclient-log-handler
 
 Options
 -------
 
-api_key (required)
+api_token (required)
 ~~~~~~~~~~~~~~~~~~
 
 Generate a key at https://api.slack.com/
@@ -98,14 +94,14 @@ This example will send INFO and ERRORS to Slack, as well as errors to admin emai
             },
             'slack-error': {
                 'level': 'ERROR',
-                'api_key': SLACK_API_KEY,
-                'class': 'slacker_log_handler.SlackerLogHandler',
+                'api_token': SLACK_API_KEY,
+                'class': 'slackclient_log_handler.SlackclientLogHandler',
                 'channel': '#general'
             },
             'slack-info': {
                 'level': 'INFO',
-                'api_key': SLACK_API_KEY,
-                'class': 'slacker_log_handler.SlackerLogHandler',
+                'api_token': SLACK_API_KEY,
+                'class': 'slackclient_log_handler.SlackclientLogHandler',
                 'channel': '#general'
             },
             'loggers': {
@@ -121,16 +117,16 @@ This example will send INFO and ERRORS to Slack, as well as errors to admin emai
 Example Python logging handler
 ------------------------------
 
-This is how you use `slacker_log_handler` as a regular Python logging handler.
+This is how you use `slackclient_log_handler` as a regular Python logging handler.
 This example will send a error message to a slack channel.
 
 .. code-block:: python
 
     import logging
-    from slacker_log_handler import SlackerLogHandler, NoStacktraceFormatter
+    from slackclient_log_handler import SlackclientLogHandler, NoStacktraceFormatter
 
     # Create slack handler
-    slack_handler = SlackerLogHandler('my-channel-token', 'my-channel-name', stack_trace=True)
+    slack_handler = SlackclientLogHandler('my-channel-token', 'my-channel-name')
 
     # Create logger
     logger = logging.getLogger('debug_application')
@@ -156,7 +152,7 @@ Reference: https://api.slack.com/docs/message-formatting
 
 .. code-block:: python
 
-  class CustomLogHandler(SlackerLogHandler):
+  class CustomLogHandler(SlackclientLogHandler):
       def build_msg(self, record):
           message = "> New message :\n" + record.getMessage()
           return message
@@ -166,6 +162,6 @@ License
 
 Apache 2.0
 
-Slacker is also under Apache 2.0.
+Slack-sdk is also under MIT.
 
 See also: https://api.slack.com/terms-of-service

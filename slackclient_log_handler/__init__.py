@@ -1,9 +1,10 @@
 import json
 import traceback
+import six
 from logging import Handler, CRITICAL, ERROR, WARNING, INFO, FATAL, DEBUG, NOTSET, Formatter
 
-import six
-import slacker
+from slack_sdk import WebClient
+from slack_sdk import errors
 
 ERROR_COLOR = 'danger'  # color name is built in to Slack API
 WARNING_COLOR = 'warning'  # color name is built in to Slack API
@@ -42,16 +43,16 @@ class NoStacktraceFormatter(Formatter):
             record.exc_text = saved_exc_text
 
 
-class SlackerLogHandler(Handler):
-    def __init__(self, api_key, channel, stack_trace=True, username='Python logger', icon_url=None, icon_emoji=None,
-                 fail_silent=False, ping_users=None, ping_level=None):
+class SlackclientLogHandler(Handler):
+    def __init__(self, api_token, channel, username='Python logger', icon_url=None, icon_emoji=None,
+                 fail_silent=False, ping_users=None, ping_level=None, stack_trace=True):
         Handler.__init__(self)
         self.formatter = NoStacktraceFormatter()
 
         self.stack_trace = stack_trace
         self.fail_silent = fail_silent
 
-        self.slacker = slacker.Slacker(api_key)
+        self.client = WebClient(token=api_token)
 
         self.username = username
         self.icon_url = icon_url
@@ -64,7 +65,7 @@ class SlackerLogHandler(Handler):
         self.ping_users = []
 
         if ping_users:
-            user_list = self.slacker.users.list().body['members']
+            user_list = self.client.users_list().data['members']
 
             for ping_user in ping_users:
                 ping_user = ping_user.lstrip('@')
@@ -93,7 +94,7 @@ class SlackerLogHandler(Handler):
         return trace
 
     def emit(self, record):
-        message = self.build_msg(record)
+        message = record
 
         if self.ping_users and record.levelno >= self.ping_level:
             for user in self.ping_users:
@@ -106,7 +107,7 @@ class SlackerLogHandler(Handler):
             attachments = None
 
         try:
-            self.slacker.chat.post_message(
+            self.client.chat_postMessage(
                 text=message,
                 channel=self.channel,
                 username=self.username,
@@ -114,7 +115,7 @@ class SlackerLogHandler(Handler):
                 icon_emoji=self.icon_emoji,
                 attachments=attachments,
             )
-        except slacker.Error as e:
+        except errors.SlackClientError as e:
             if self.fail_silent:
                 pass
             else:
