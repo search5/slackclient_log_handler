@@ -1,5 +1,5 @@
 slackclient_log_handler
-===================
+========================
 
 .. image:: https://img.shields.io/pypi/v/slacker_log_handler.svg?style=flat-square
     :target: https://pypi.python.org/pypi/slackclient_log_handler
@@ -34,7 +34,7 @@ Options
 -------
 
 api_token (required)
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 Generate a key at https://api.slack.com/
 

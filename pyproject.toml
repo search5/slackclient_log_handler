@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slackclient_log_handler"
-version = "0.1.0"
+version = "0.1.1"
 description = "Posts log events to Slack via API"
 authors = ["Ji-Ho Lee <search5@gmail.com>"]
 readme = "README.rst"
