@@ -80,11 +80,11 @@ class SlackclientLogHandler(Handler):
 
 
     def build_msg(self, record):
-        return six.text_type(self.format(record))
+        return record
 
     def build_trace(self, record, fallback):
         trace = {
-            'fallback': fallback,
+            'fallback': fallback.getMessage(),
             'color': COLORS.get(self.level, INFO_COLOR)
         }
 
@@ -94,21 +94,21 @@ class SlackclientLogHandler(Handler):
         return trace
 
     def emit(self, record):
-        message = record
+        message = self.build_msg(record)
 
         if self.ping_users and record.levelno >= self.ping_level:
             for user in self.ping_users:
-                message = '<@%s> %s' % (user, message)
+                message = '<@%s> %s' % (user, message.getMessage())
 
         if self.stack_trace:
-            trace = self.build_trace(record, fallback=message)
+            trace = self.build_trace(record, fallback=message.getMessage())
             attachments = json.dumps([trace])
         else:
             attachments = None
 
         try:
             self.client.chat_postMessage(
-                text=message,
+                text=message.getMessage(),
                 channel=self.channel,
                 username=self.username,
                 icon_url=self.icon_url,
